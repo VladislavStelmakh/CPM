@@ -11,8 +11,9 @@ import java.util.List;
 public class Reader {
 
 	public List<Usuario> usuarios = new ArrayList<Usuario>();
+	public List<Libro> libros = new ArrayList<Libro>();
 
-	public void read(String archivo) throws Exception {
+	public void readUsers(String archivo) throws Exception {
 		
 		try
 		{
@@ -52,11 +53,47 @@ public class Reader {
 
 	}
 	
-	public void print(List<Usuario> usuarios) {
-		for(Usuario usuario : usuarios) {
-			System.out.println("DNI: " + usuario.getDNI() + " Nombre: " + usuario.getNombre() + 
-					" Apellidos: " + usuario.getApellidos() + " Contraseña: " + usuario.getContraseña());
+	public void readBooks(String archivo) throws Exception {
+		
+		try
+		{
+			BufferedReader br = new BufferedReader(new FileReader(archivo));
+			String fileRead = br.readLine();
+
+			while (fileRead != null)
+			{
+				String[] token = fileRead.split(":");
+
+				Long ISBN = Long.parseLong(token[0]);
+				String titulo = String.valueOf(token[1]);
+				String editorial = String.valueOf(token[2]);
+				String autor = String.valueOf(token[3]);
+				String genero = String.valueOf(token[4]);
+				String resumen = String.valueOf(token[5]);
+				double precio = Double.parseDouble(token[0]);
+
+				Libro libro = new Libro(ISBN, titulo, editorial, autor, genero, resumen, precio);
+
+				libros.add(libro);
+				
+				fileRead = br.readLine();
+			}
+			
+			br.close();
 		}
+		
+		
+		// handle exceptions
+		catch (FileNotFoundException fnfe)
+		{
+			System.out.println("file not found");
+		}
+
+		catch (IOException ioe)
+		{
+			ioe.printStackTrace();
+		}
+
 	}
 
 }

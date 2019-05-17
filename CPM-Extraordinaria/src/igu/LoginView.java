@@ -8,11 +8,15 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import logic.Reader;
+import logic.Usuario;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.awt.Color;
+import java.awt.Dialog;
+
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
@@ -21,6 +25,7 @@ import javax.swing.Action;
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public class LoginView extends JFrame {
 
@@ -32,8 +37,10 @@ public class LoginView extends JFrame {
 	private JPasswordField passwordFieldContraseña;
 	private JButton btnLogin;
 	private Action action;
-	
+
 	private Reader reader;
+
+	private HomeView home;
 
 	/**
 	 * Launch the application.
@@ -44,6 +51,7 @@ public class LoginView extends JFrame {
 				try {
 					LoginView frame = new LoginView();
 					frame.setVisible(true);
+					frame.setLocationRelativeTo(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -53,10 +61,13 @@ public class LoginView extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * 
+	 * @throws FileNotFoundException
 	 */
-	public LoginView() {
+	public LoginView() throws FileNotFoundException {
 		reader = new Reader();
-		setIconImage(Toolkit.getDefaultToolkit().getImage("/Users/Vladi/Downloads/Practico Julio 2016/img/libreria.jpg"));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage("/Users/Vladi/Downloads/Practico Julio 2016/img/libreria.jpg"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -69,8 +80,21 @@ public class LoginView extends JFrame {
 		contentPane.add(getLblContraseña());
 		contentPane.add(getPasswordFieldContraseña());
 		contentPane.add(getBtnLogin());
-		
+
+		try {
+			reader.readUsers("files/clientes.dat");
+		} catch (Exception e) {
+			throw new FileNotFoundException("Problema al leer el archivo de clientes");
+		}
+
+		try {
+			reader.readBooks("files/libros.dat");
+		} catch (Exception e) {
+			throw new FileNotFoundException("Problema al leer el archivo de libros");
+		}
+
 	}
+
 	private JLabel getLblTitulo() {
 		if (lblTitulo == null) {
 			lblTitulo = new JLabel("Tienda de libros");
@@ -81,6 +105,7 @@ public class LoginView extends JFrame {
 		}
 		return lblTitulo;
 	}
+
 	private JTextField getTxtUser() {
 		if (txtUser == null) {
 			txtUser = new JTextField();
@@ -89,6 +114,7 @@ public class LoginView extends JFrame {
 		}
 		return txtUser;
 	}
+
 	private JLabel getLblUsuario() {
 		if (lblUsuario == null) {
 			lblUsuario = new JLabel("Usuario:");
@@ -96,6 +122,7 @@ public class LoginView extends JFrame {
 		}
 		return lblUsuario;
 	}
+
 	private JLabel getLblContraseña() {
 		if (lblContraseña == null) {
 			lblContraseña = new JLabel("Contraseña:");
@@ -103,6 +130,7 @@ public class LoginView extends JFrame {
 		}
 		return lblContraseña;
 	}
+
 	private JPasswordField getPasswordFieldContraseña() {
 		if (passwordFieldContraseña == null) {
 			passwordFieldContraseña = new JPasswordField();
@@ -110,6 +138,7 @@ public class LoginView extends JFrame {
 		}
 		return passwordFieldContraseña;
 	}
+
 	private JButton getBtnLogin() {
 		if (btnLogin == null) {
 			btnLogin = new JButton("Loguearse");
@@ -118,26 +147,50 @@ public class LoginView extends JFrame {
 		}
 		return btnLogin;
 	}
+
 	private class SwingAction extends AbstractAction {
 		public SwingAction() {
 			putValue(NAME, "Loguearse");
 			putValue(SHORT_DESCRIPTION, "Some short description");
 		}
+
 		public void actionPerformed(ActionEvent e) {
-			try {
-				reader.read("files/clientes.dat");
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			String nombre = getTxtUser().getText();
+			String contraseña = getPasswordFieldContraseña().getText();
+			boolean registrado = false;
+			boolean correcta = false;
+			if (registrado == false || correcta == false) {
+				for (Usuario usuario : reader.usuarios) {
+					if (usuario.getNombre().equals(nombre)) {
+						registrado = true;
+					}
+					if (usuario.getContraseña().equals(contraseña)) {
+						correcta = true;
+					}
+				}
 			}
-			
-			reader.print(reader.usuarios);
+
+			if (registrado == false || correcta == false) {
+				JOptionPane.showMessageDialog(null, "El usuario o la contraseña son incorrectos", "Error de acceso",
+						JOptionPane.ERROR_MESSAGE);
+			} else {
+				createWindow();
+			}
 		}
 	}
+
 	private Action getAction() {
 		if (action == null) {
 			action = new SwingAction();
 		}
 		return action;
+	}
+	
+	private void createWindow()
+	{
+		home = new HomeView(this);
+		home.setModal(true);
+		home.setLocationRelativeTo(this);
+		home.setVisible(true);
 	}
 }
