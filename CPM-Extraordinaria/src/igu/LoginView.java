@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import logic.Libro;
 import logic.Reader;
 import logic.Usuario;
 
@@ -26,21 +27,32 @@ import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.awt.FlowLayout;
+import javax.swing.BoxLayout;
+import java.awt.GridLayout;
+import java.awt.CardLayout;
+import java.awt.event.ActionListener;
 
 public class LoginView extends JFrame {
 
 	private JPanel contentPane;
-	private JLabel lblTitulo;
-	private JTextField txtUser;
-	private JLabel lblUsuario;
-	private JLabel lblContraseña;
-	private JPasswordField passwordFieldContraseña;
-	private JButton btnLogin;
 	private Action action;
 
 	private Reader reader;
 
 	private HomeView home;
+	private JLabel label;
+	private JPanel panel;
+	private JPanel panel_1;
+	private JPanel panel_2;
+	private JPanel panel_3;
+	private JLabel lblUsuario;
+	private JTextField txtUsuario;
+	private JLabel lblContraseña;
+	private JPasswordField passwordField;
+	private JButton btnLogin;
 
 	/**
 	 * Launch the application.
@@ -65,22 +77,9 @@ public class LoginView extends JFrame {
 	 * @throws FileNotFoundException
 	 */
 	public LoginView() throws FileNotFoundException {
+		
 		reader = new Reader();
-		setIconImage(
-				Toolkit.getDefaultToolkit().getImage("/Users/Vladi/Downloads/Practico Julio 2016/img/libreria.jpg"));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		contentPane.add(getLblTitulo());
-		contentPane.add(getTxtUser());
-		contentPane.add(getLblUsuario());
-		contentPane.add(getLblContraseña());
-		contentPane.add(getPasswordFieldContraseña());
-		contentPane.add(getBtnLogin());
-
+		
 		try {
 			reader.readUsers("files/clientes.dat");
 		} catch (Exception e) {
@@ -92,62 +91,108 @@ public class LoginView extends JFrame {
 		} catch (Exception e) {
 			throw new FileNotFoundException("Problema al leer el archivo de libros");
 		}
+		
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage("/Users/Vladi/Downloads/Practico Julio 2016/img/libreria.jpg"));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
+		contentPane.add(getLabel(), BorderLayout.NORTH);
+		contentPane.add(getPanel(), BorderLayout.CENTER);
 
 	}
-
-	private JLabel getLblTitulo() {
-		if (lblTitulo == null) {
-			lblTitulo = new JLabel("Tienda de libros");
-			lblTitulo.setForeground(new Color(255, 127, 80));
-			lblTitulo.setFont(new Font("Lucida Grande", Font.BOLD, 20));
-			lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-			lblTitulo.setBounds(6, 6, 438, 44);
+	
+	private void createWindow(String usuario, Reader reader)
+	{
+		home = new HomeView(this, usuario, reader);
+		home.setModal(true);
+		home.setLocationRelativeTo(this);
+		home.setVisible(true);
+	}
+	private JLabel getLabel() {
+		if (label == null) {
+			label = new JLabel("Tienda de libros");
+			label.setHorizontalAlignment(SwingConstants.CENTER);
+			label.setForeground(new Color(255, 127, 80));
+			label.setFont(new Font("Lucida Grande", Font.BOLD, 20));
 		}
-		return lblTitulo;
+		return label;
 	}
-
-	private JTextField getTxtUser() {
-		if (txtUser == null) {
-			txtUser = new JTextField();
-			txtUser.setBounds(220, 82, 173, 26);
-			txtUser.setColumns(10);
+	private JPanel getPanel() {
+		if (panel == null) {
+			panel = new JPanel();
+			panel.setLayout(new GridLayout(0, 1, 0, 0));
+			panel.add(getPanel_1());
+			panel.add(getPanel_2());
+			panel.add(getPanel_3());
 		}
-		return txtUser;
+		return panel;
 	}
-
+	private JPanel getPanel_1() {
+		if (panel_1 == null) {
+			panel_1 = new JPanel();
+			panel_1.setLayout(new GridLayout(1, 0, 0, 0));
+			panel_1.add(getLblUsuario());
+			panel_1.add(getTxtUser());
+		}
+		return panel_1;
+	}
+	private JPanel getPanel_2() {
+		if (panel_2 == null) {
+			panel_2 = new JPanel();
+			panel_2.setLayout(new GridLayout(1, 0, 0, 0));
+			panel_2.add(getLblContraseña());
+			panel_2.add(getPasswordFieldContraseña());
+		}
+		return panel_2;
+	}
+	private JPanel getPanel_3() {
+		if (panel_3 == null) {
+			panel_3 = new JPanel();
+			panel_3.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+			panel_3.add(getBtnLogin());
+		}
+		return panel_3;
+	}
 	private JLabel getLblUsuario() {
 		if (lblUsuario == null) {
 			lblUsuario = new JLabel("Usuario:");
-			lblUsuario.setBounds(147, 87, 61, 16);
+			lblUsuario.setHorizontalAlignment(SwingConstants.CENTER);
 		}
 		return lblUsuario;
 	}
-
+	private JTextField getTxtUser() {
+		if (txtUsuario == null) {
+			txtUsuario = new JTextField();
+			txtUsuario.setColumns(10);
+		}
+		return txtUsuario;
+	}
 	private JLabel getLblContraseña() {
 		if (lblContraseña == null) {
 			lblContraseña = new JLabel("Contraseña:");
-			lblContraseña.setBounds(127, 115, 81, 16);
+			lblContraseña.setHorizontalAlignment(SwingConstants.CENTER);
 		}
 		return lblContraseña;
 	}
-
 	private JPasswordField getPasswordFieldContraseña() {
-		if (passwordFieldContraseña == null) {
-			passwordFieldContraseña = new JPasswordField();
-			passwordFieldContraseña.setBounds(220, 110, 173, 26);
+		if (passwordField == null) {
+			passwordField = new JPasswordField();
+			passwordField.setColumns(10);
 		}
-		return passwordFieldContraseña;
+		return passwordField;
 	}
-
 	private JButton getBtnLogin() {
 		if (btnLogin == null) {
 			btnLogin = new JButton("Loguearse");
 			btnLogin.setAction(getAction());
-			btnLogin.setBounds(276, 148, 117, 29);
 		}
 		return btnLogin;
 	}
-
+	
 	private class SwingAction extends AbstractAction {
 		public SwingAction() {
 			putValue(NAME, "Loguearse");
@@ -174,23 +219,15 @@ public class LoginView extends JFrame {
 				JOptionPane.showMessageDialog(null, "El usuario o la contraseña son incorrectos", "Error de acceso",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
-				createWindow();
+				createWindow(nombre, reader);
 			}
 		}
 	}
-
+	
 	private Action getAction() {
 		if (action == null) {
 			action = new SwingAction();
 		}
 		return action;
-	}
-	
-	private void createWindow()
-	{
-		home = new HomeView(this);
-		home.setModal(true);
-		home.setLocationRelativeTo(this);
-		home.setVisible(true);
 	}
 }

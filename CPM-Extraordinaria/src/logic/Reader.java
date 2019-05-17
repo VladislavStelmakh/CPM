@@ -95,5 +95,9 @@ public class Reader {
 		}
 
 	}
+	
+	public List<Libro> getLibros(){
+		return this.libros;
+	}
 
 }
