@@ -70,7 +70,7 @@ public class Reader {
 				String autor = String.valueOf(token[3]);
 				String genero = String.valueOf(token[4]);
 				String resumen = String.valueOf(token[5]);
-				double precio = Double.parseDouble(token[0]);
+				double precio = Double.parseDouble(token[6]);
 
 				Libro libro = new Libro(ISBN, titulo, editorial, autor, genero, resumen, precio);
 

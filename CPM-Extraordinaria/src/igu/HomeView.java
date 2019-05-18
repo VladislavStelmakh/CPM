@@ -24,10 +24,16 @@ import javax.swing.JPasswordField;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JRadioButton;
 import java.awt.GridLayout;
 import java.awt.Color;
+import javax.swing.ButtonGroup;
+import javax.swing.border.LineBorder;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 public class HomeView extends JDialog {
 
@@ -42,9 +48,10 @@ public class HomeView extends JDialog {
 	private Reader reader;
 	private JButton btnComprar;
 	private JPanel panel;
-	private JRadioButton rdbtnNewRadioButton;
-	private JRadioButton rdbtnNewRadioButton_1;
-	private JRadioButton rdbtnNewRadioButton_2;
+	private JRadioButton rdbtn15;
+	private JRadioButton rdbtn1540;
+	private JRadioButton rdbtn40;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 //	/**
 //	 * Launch the application.
@@ -109,12 +116,42 @@ public class HomeView extends JDialog {
 		if (list == null) {
 			DefaultListModel model = new DefaultListModel();
 			list = new JList(model);
+			list.addListSelectionListener(new ListSelectionListener() {
+				public void valueChanged(ListSelectionEvent e) {
+					if (!e.getValueIsAdjusting()){
+			            JList source = (JList)e.getSource();
+			            String titulo = source.getSelectedValue().toString();
+			            Long ISBN = null;
+			            String editorial = "";
+			        	String autor = "";
+			        	String genero = "";
+			        	String resumen = "";
+			        	double precio = 0.0;
+			            for (Libro libro : reader.getLibros()) {
+			            	if(libro.getTitulo().equals(titulo)) {
+			            		ISBN = libro.getISBN();
+			            		editorial = libro.getEditorial();
+					        	autor = libro.getAutor();
+					        	genero = libro.getGenero();
+					        	resumen = libro.getResumen();
+					        	precio = libro.getPrecio();
+			            	}
+			            }
+			            JOptionPane.showMessageDialog(null, "ISBN: " + ISBN + "\n" + "Título: " + titulo + "\n" + 
+			            "Editorial: " + editorial + "\n" + "Autor: " + autor + "\n" + "Género: " + genero + "\n"+ 
+			            "Resumen: " + resumen + "\n" + "Precio: " + precio + "€" + "\n", "Información del libro", JOptionPane.INFORMATION_MESSAGE);
+			        }
+				}
+			});
+			list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			list.setBorder(new LineBorder(new Color(0, 0, 0)));
 			list.setBackground(Color.ORANGE);
 			for(int i = 0; i < reader.getLibros().size(); i++) {
 				model.add(i, reader.getLibros().get(i).titulo);
 			}
 			list.revalidate();
 			list.repaint();
+			
 		}
 		return list;
 	}
@@ -130,28 +167,31 @@ public class HomeView extends JDialog {
 			panel = new JPanel();
 			panel.setBackground(Color.WHITE);
 			panel.setLayout(new GridLayout(1, 0, 0, 0));
-			panel.add(getRdbtnNewRadioButton());
-			panel.add(getRdbtnNewRadioButton_1());
-			panel.add(getRdbtnNewRadioButton_2());
+			panel.add(getRdbtn15());
+			panel.add(getRdbtn1540());
+			panel.add(getRdbtn40());
 		}
 		return panel;
 	}
-	private JRadioButton getRdbtnNewRadioButton() {
-		if (rdbtnNewRadioButton == null) {
-			rdbtnNewRadioButton = new JRadioButton("<=15€");
+	private JRadioButton getRdbtn15() {
+		if (rdbtn15 == null) {
+			rdbtn15 = new JRadioButton("<=15€");
+			buttonGroup.add(rdbtn15);
 		}
-		return rdbtnNewRadioButton;
+		return rdbtn15;
 	}
-	private JRadioButton getRdbtnNewRadioButton_1() {
-		if (rdbtnNewRadioButton_1 == null) {
-			rdbtnNewRadioButton_1 = new JRadioButton("15>=40€");
+	private JRadioButton getRdbtn1540() {
+		if (rdbtn1540 == null) {
+			rdbtn1540 = new JRadioButton("15>=40€");
+			buttonGroup.add(rdbtn1540);
 		}
-		return rdbtnNewRadioButton_1;
+		return rdbtn1540;
 	}
-	private JRadioButton getRdbtnNewRadioButton_2() {
-		if (rdbtnNewRadioButton_2 == null) {
-			rdbtnNewRadioButton_2 = new JRadioButton(">40€");
+	private JRadioButton getRdbtn40() {
+		if (rdbtn40 == null) {
+			rdbtn40 = new JRadioButton(">40€");
+			buttonGroup.add(rdbtn40);
 		}
-		return rdbtnNewRadioButton_2;
+		return rdbtn40;
 	}
 }
