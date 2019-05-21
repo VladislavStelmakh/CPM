@@ -34,6 +34,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.Action;
+import javax.swing.AbstractAction;
+import java.awt.event.ActionEvent;
 
 public class HomeView extends JDialog {
 
@@ -45,6 +48,8 @@ public class HomeView extends JDialog {
 	private JScrollPane scrollPane;
 	private JList list;
 	
+	private ArrayList<Libro> librosComprados;
+	
 	private Reader reader;
 	private JButton btnComprar;
 	private JPanel panel;
@@ -52,6 +57,7 @@ public class HomeView extends JDialog {
 	private JRadioButton rdbtn1540;
 	private JRadioButton rdbtn40;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private Action action;
 
 //	/**
 //	 * Launch the application.
@@ -76,6 +82,7 @@ public class HomeView extends JDialog {
 		this.reader = reader;
 		lv = login;
 		this.usuario = usuario;
+		librosComprados = new ArrayList<Libro>();
 				
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -158,6 +165,7 @@ public class HomeView extends JDialog {
 	private JButton getBtnComprar() {
 		if (btnComprar == null) {
 			btnComprar = new JButton("Comprar");
+			btnComprar.setAction(getAction());
 			btnComprar.setBackground(Color.ORANGE);
 		}
 		return btnComprar;
@@ -193,5 +201,20 @@ public class HomeView extends JDialog {
 			buttonGroup.add(rdbtn40);
 		}
 		return rdbtn40;
+	}
+	private class SwingAction extends AbstractAction {
+		public SwingAction() {
+			putValue(NAME, "Comprar");
+			putValue(SHORT_DESCRIPTION, "Some short description");
+		}
+		public void actionPerformed(ActionEvent e) {
+			
+		}
+	}
+	private Action getAction() {
+		if (action == null) {
+			action = new SwingAction();
+		}
+		return action;
 	}
 }
