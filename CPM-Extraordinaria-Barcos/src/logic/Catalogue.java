@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Files {
+public class Catalogue {
 		
 	public List<String> readFile(String fileName) {
 		String linea="";
